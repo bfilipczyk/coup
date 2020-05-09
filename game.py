@@ -3,6 +3,7 @@ import random
 import player
 
 
+
 class Game:
 
     def __init__(self):
@@ -171,7 +172,7 @@ class Game:
             return self.active_player.name
         return -1
 
-    def tellCard(self,type):
+    def tellCard(self, type):
         if type == 'russia':
             print("Russia")
         elif type == 'protest':
@@ -261,7 +262,7 @@ class Game:
                     break
             self.changingPlayer()
             self.roundCount += 1
-        if self.active_player.health>0:
+        if self.active_player.health > 0:
             return self.active_player.name
         else:
             return self.target_player.name

@@ -166,7 +166,7 @@ def ai_action(known_cards, player_cards, player_money, enemy_hp):
         n_weight = result[i]['value']/result[i]['times']
         if n_weight > b_weight:
             best_action = i
-    tmp=['usa', 'local bisnessmen', 'affair', 'media','protest', 'police', 'russia']
+    tmp = ['usa', 'local bisnessmen', 'affair', 'media', 'protest', 'police', 'russia']
     for i in range(0, len(tmp)):
         if tmp[i] == best_action:
             return i

@@ -62,7 +62,7 @@ class Player:
         return card
 
     def chooseAction(self, known_cards, enemy_hp):
-        if self.money>=10:
+        if self.money >= 10:
             return 2
         if self.is_bot:
             return ai.ai_action(known_cards, self.cards,self.money, enemy_hp)
