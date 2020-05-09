@@ -50,10 +50,10 @@ class Player:
         else:
             print("Choose cards to return")
             self.showCards()
-            if self.health == 2:
-                choice = [int(input()), int(input())]
-            else:
-                choice = [int(input())]
+            #if self.health == 2:
+            choice = [int(input()), int(input())]
+            #else:
+            #    choice = [int(input())]
         card = []
         for i in choice:
             card.append(self.cards[i])

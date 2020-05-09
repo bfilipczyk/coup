@@ -62,7 +62,7 @@ class Game_gui():
         self.b_no = Button((106, 82, 80), 620, 505, 130, 30, 'No')
         self.b_no.draw(self.screen)
 
-    def Actions_info(self, is_bot, action_type):
+
 
     def Refresh_Players(self, money, cards, is_bot):
 
