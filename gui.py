@@ -1,6 +1,5 @@
 import pygame, sys
 
-
 class Button():
     def __init__(self, color, x, y, width, height, text=''):
         self.color = color
@@ -24,6 +23,7 @@ class Button():
             if self.y < pos[1] < self.y + self.height:
                 return True
         return False
+
 
 class Game_gui():
     def __init__(self):
@@ -51,10 +51,14 @@ class Game_gui():
         self.b_police.draw(self.screen)
         self.b_russia = Button((106, 82, 80), 50, 480, 130, 30, 'Russia')
         self.b_russia.draw(self.screen)
+        self.c1 = None
+        self.c2 = None
+        self.c3 = None
+        self.c4 = None
 
         #making challange/block box
         pygame.draw.rect(self.screen, (74, 82, 80), (570, 310, 230, 290))
-        label = self.font.render("Challange/Block:", 0, (0, 0, 0))
+        label = self.font.render("Challange / Block:", 0, (0, 0, 0))
         self.screen.blit(label, (630, 340))
         #buttons
         self.b_yes = Button((106, 82, 80), 620, 400, 130, 30, 'Yes')
@@ -62,7 +66,11 @@ class Game_gui():
         self.b_no = Button((106, 82, 80), 620, 505, 130, 30, 'No')
         self.b_no.draw(self.screen)
 
-
+    def Clear_Middle(self, whole=True):
+        if whole:
+            pygame.draw.rect(self.screen, (74, 82, 80), (250, 180, 300, 220))
+        else:
+            pygame.draw.rect(self.screen, (74, 82, 80), (335, 365, 145, 25))
 
     def Refresh_Players(self, money, cards, is_bot):
 
@@ -75,13 +83,34 @@ class Game_gui():
             cards_label = self.font.render('Cards: ' + str(len(cards)), 0, (0, 0, 0))
             self.screen.blit(cards_label, (430, 80))
         else:
-            pygame.draw.rect(self.screen, (74, 82, 80), (250, 450, 300, 150))
+            pygame.draw.rect(self.screen, (74, 82, 80), (250, 420, 300, 180))
             name_label = self.font.render("Player", 0, (0, 0, 0))
-            self.screen.blit(name_label, (380, 470))
+            self.screen.blit(name_label, (380, 430))
             money_label = self.font.render('Money: ' + str(money), 0, (0, 0, 0))
-            self.screen.blit(money_label, (372, 505))
-            cards_label = self.font.render('Cards: ' + cards[0] + ' , ' + cards[1], 0, (0, 0, 0))
-            self.screen.blit(cards_label, (305, 550))
+            self.screen.blit(money_label, (372, 455))
+            cards_label = self.font.render('Cards: ', 0, (0, 0, 0))
+            self.screen.blit(cards_label, (380, 480))
+            amount = len(cards)
+            self.c1 = Button((106, 82, 80), 260, 505, 130, 30, cards[0])
+            self.c1.draw(self.screen)
+            if amount >= 2:
+                self.c2 = Button((106, 82, 80), 410, 505, 130, 30, cards[1])
+                self.c2.draw(self.screen)
+                if amount >= 3:
+                    self.c3 = Button((106, 82, 80), 260, 550, 130, 30, cards[2])
+                    self.c3.draw(self.screen)
+                    if amount == 4:
+                        self.c4 = Button((106, 82, 80), 410, 550, 130, 30, cards[3])
+                        self.c4.draw(self.screen)
+                    else:
+                        self.c4 = None
+                else:
+                    self.c3 = None
+                    self.c4 = None
+            else:
+                self.c2 = None
+                self.c3 = None
+                self.c4 = None
 
     def Refresh_known_cards(self, cards):
         pygame.draw.rect(self.screen, (74, 82, 80), (570, 0, 230, 290))
@@ -93,7 +122,85 @@ class Game_gui():
             self.screen.blit(card_label, (650, h_tmp))
             h_tmp += 50
 
-    def Choose_action(self):
+    def Show_text(self, text_nr, name=None, action=None, choice=False):
+        if text_nr == 0:
+            name_label = self.font.render("Not enough money", 0, (0, 0, 0))
+            self.screen.blit(name_label, (340, 370))
+        elif text_nr == 1:
+            name_label = self.font.render(name + " choses action:", 0, (0, 0, 0))
+            self.screen.blit(name_label, (315, 195))
+        elif text_nr == 2:
+            name_label = self.font.render(action, 0, (0, 0, 0))
+            self.screen.blit(name_label, (325, 220))
+        elif text_nr == 3:
+            name_label = self.font.render(name + " do you challange?", 0, (0, 0, 0))
+            self.screen.blit(name_label, (315, 245))
+        elif text_nr == 4:
+            if choice:
+                name_label = self.font.render(name + " challenges", 0, (0, 0, 0))
+                self.screen.blit(name_label, (315, 275))
+            else:
+                name_label = self.font.render(name + " doesn't challenges", 0, (0, 0, 0))
+                self.screen.blit(name_label, (315, 275))
+        elif text_nr == 5:
+            name_label = self.font.render(name + " do you block?", 0, (0, 0, 0))
+            self.screen.blit(name_label, (315, 305))
+        elif text_nr == 6:
+            if choice:
+                name_label = self.font.render(name + " doesn't blocks", 0, (0, 0, 0))
+                self.screen.blit(name_label, (315, 335))
+            else:
+                name_label = self.font.render(name + " doesn't blocks", 0, (0, 0, 0))
+                self.screen.blit(name_label, (315, 335))
+        else:
+            self.Clear_Middle()
+            name_label = self.font.render("Choose cards to return", 0, (0, 0, 0))
+            self.screen.blit(name_label, (315, 195))
+
+    def Choose_action(self, money):
+        while True:
+            pygame.display.update()
+            pos = pygame.mouse.get_pos()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    sys.exit(0)
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.b_usa.IsOver(pos):
+                        return 0
+                        #self.Clear_Middle(False)
+                        #self.Show_text(2,action='usa')
+                    if self.b_local_businessmen.IsOver(pos):
+                        return 1
+                        #self.Clear_Middle(False)
+                        #self.Show_text(2, action='local_businessmen')
+                    if self.b_affair.IsOver(pos):
+                        if money >= 7:
+                            return 2
+                            #self.Clear_Middle(False)
+                            #self.Show_text(2, action='affair')
+                        else:
+                            self.Show_text(0)
+                    if self.b_media.IsOver(pos):
+                        return 3
+                        #self.Clear_Middle(False)
+                        #self.Show_text(2, action='media')
+                    if self.b_protest.IsOver(pos):
+                        if money >= 3:
+                            return 4
+                            #self.Clear_Middle(False)
+                            #self.Show_text(2, action='protest')
+                        else:
+                            self.Show_text(0)
+                    if self.b_police.IsOver(pos):
+                        return 5
+                        #self.Clear_Middle(False)
+                        #self.Show_text(2, action='police')
+                    if self.b_russia.IsOver(pos):
+                        return 6
+                        #self.Clear_Middle(False)
+                        #self.Show_text(2, action='russia')
+
+    def Choose_cards(self):
         while True:
             pygame.display.update()
             pos = pygame.mouse.get_pos()
@@ -102,35 +209,31 @@ class Game_gui():
                 if event.type == pygame.QUIT:
                     sys.exit(0)
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    print(pos)
-                    if self.b_usa.IsOver(pos):
-                        print('usa')
-                    if self.b_local_businessmen.IsOver(pos):
-                        print('local_businessmen')
-                    if self.b_affair.IsOver(pos):
-                        print('affair')
-                    if self.b_media.IsOver(pos):
-                        print('media')
-                    if self.b_protest.IsOver(pos):
-                        print('protest')
-                    if self.b_police.IsOver(pos):
-                        print('police')
-                    if self.b_russia.IsOver(pos):
-                        print('russia')
+                    if self.c1.IsOver(pos):
+                        return 0
+                    if self.c2.IsOver(pos):
+                        return 1
+                    if self.c3.IsOver(pos):
+                        return 2
+                    if self.c4.IsOver(pos):
+                        return 3
 
-    def loop(self):
+    def Block_Chall(self):
         while True:
             pygame.display.update()
+            pos = pygame.mouse.get_pos()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit(0)
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.b_yes.IsOver(pos):
+                        return 1
+                    if self.b_no.IsOver(pos):
+                        return 0
+
+    def Refresh(self):
+        pygame.display.update()
 
 
 
 
-if __name__ == '__main__':
-    g = Game_gui()
-    g.Refresh_Players(2, ['Protest', 'Russia'], False)
-    g.Refresh_Players(2, ['Protest', 'Russia'], True)
-    g.Refresh_known_cards(['Protest', 'Russia', 'Protest', 'Russia'])
-    g.Choose_action()
