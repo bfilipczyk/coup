@@ -152,9 +152,13 @@ class Game_gui():
             else:
                 name_label = self.font.render(name + " doesn't blocks", 0, (0, 0, 0))
                 self.screen.blit(name_label, (315, 335))
-        else:
+        elif text_nr == 7:
             self.Clear_Middle()
             name_label = self.font.render("Choose cards to return", 0, (0, 0, 0))
+            self.screen.blit(name_label, (315, 195))
+        else:
+            self.Clear_Middle()
+            name_label = self.font.render(name+" won", 0, (0, 0, 0))
             self.screen.blit(name_label, (315, 195))
 
     def Choose_action(self, money):
@@ -167,38 +171,24 @@ class Game_gui():
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if self.b_usa.IsOver(pos):
                         return 0
-                        #self.Clear_Middle(False)
-                        #self.Show_text(2,action='usa')
                     if self.b_local_businessmen.IsOver(pos):
                         return 1
-                        #self.Clear_Middle(False)
-                        #self.Show_text(2, action='local_businessmen')
                     if self.b_affair.IsOver(pos):
                         if money >= 7:
                             return 2
-                            #self.Clear_Middle(False)
-                            #self.Show_text(2, action='affair')
                         else:
                             self.Show_text(0)
                     if self.b_media.IsOver(pos):
                         return 3
-                        #self.Clear_Middle(False)
-                        #self.Show_text(2, action='media')
                     if self.b_protest.IsOver(pos):
                         if money >= 3:
                             return 4
-                            #self.Clear_Middle(False)
-                            #self.Show_text(2, action='protest')
                         else:
                             self.Show_text(0)
                     if self.b_police.IsOver(pos):
                         return 5
-                        #self.Clear_Middle(False)
-                        #self.Show_text(2, action='police')
                     if self.b_russia.IsOver(pos):
                         return 6
-                        #self.Clear_Middle(False)
-                        #self.Show_text(2, action='russia')
 
     def Choose_cards(self):
         while True:
@@ -234,6 +224,19 @@ class Game_gui():
     def Refresh(self):
         pygame.display.update()
 
+    def Win_message(self, name):
+        self.Show_text(8, name)
+        reset = Button((106, 82, 80), 335, 285, 130, 30, 'Restart')
+        reset.draw(self.screen)
+        while True:
+            pygame.display.update()
+            pos = pygame.mouse.get_pos()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    sys.exit(0)
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if reset.IsOver(pos):
+                        return True
 
 
 

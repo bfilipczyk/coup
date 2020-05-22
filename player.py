@@ -3,6 +3,7 @@ import ai
 import random
 from gui import Game_gui
 
+
 class Player:
     def __init__(self, cards=[], money=2, name=-1, is_bot=False, health=2):
         self.cards = cards

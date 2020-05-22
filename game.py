@@ -222,6 +222,14 @@ class Game:
             self.changingPlayer()
             self.roundCount += 1
         if self.active_player.health > 0:
-            return self.active_player.name
+            return self.interface.Win_message(self.active_player.name)
         else:
-            return self.target_player.name
+            return self.interface.Win_message(self.target_player.name)
+
+
+if __name__ == '__main__':
+    game = Game()
+    game.reset()
+    while True:
+        if game.play():
+            game.reset()
