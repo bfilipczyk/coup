@@ -1,6 +1,9 @@
 
 import ai
 import random
+from gui import Game_gui
+
+
 class Player:
     def __init__(self, cards=[], money=2, name=-1, is_bot=False, health=2):
         self.cards = cards
@@ -9,99 +12,67 @@ class Player:
         self.is_bot = is_bot
         self.health = 2
 
-    def losingCard(self):
-        # todo wybór
+    def losingCard(self, gui):
         if self.is_bot:
-            choice = random.randint(0,self.health-1)
+            choice = random.randint(0, self.health-1)
         else:
-            print("Player ", self.name)
-            print("Wybierz karte do odrzucenia")
-            self.showCards()
-            choice = int(input())
+            gui.Refresh_Players(self.money, self.cards, self.is_bot)
+            gui.Show_text(7)
+            choice = gui.Choose_cards()
         card = self.cards[choice]
         self.cards.remove(card)
         self.health -= 1
         return card
 
-    def tellCard(self, cardtype):
-        if cardtype == 'russia':
-            print("Russia")
-        elif cardtype == 'protest':
-            print("Protest")
-        elif cardtype == 'media':
-            print("Media")
-        elif cardtype == 'police':
-            print("Police")
-        else:
-            print("UE")
-
-    def showCards(self):
-        for i in range(0,len(self.cards)):
-            print(i)
-            self.tellCard(self.cards[i])
-
-    def choosingCards(self):
-        #todo wybór
+    def choosingCards(self, gui):
         if self.is_bot:
-            if self.health == 2:
-                choice = random.sample([0, 1, 2, 3], 2)
-            else:
-                choice = random.sample([0, 1, 2], 1)
+            choice = random.sample([0, 1, 2, 3], 2)
+            card = []
+            for i in choice:
+                card.append(self.cards[i])
+            for i in card:
+                self.cards.remove(i)
+            return card
         else:
-            print("Choose cards to return")
-            self.showCards()
-            if self.health == 2:
-                choice = [int(input()), int(input())]
-            else:
-                choice = [int(input())]
-        card = []
-        for i in choice:
-            card.append(self.cards[i])
-        for i in card:
-            self.cards.remove(i)
-        return card
+            gui.Refresh_Players(self.money, self.cards, self.is_bot)
+            gui.Show_text(7)
+            card = []
+            choice = gui.Choose_cards()
+            card.append(self.cards[choice])
+            self.cards.remove(card[0])
+            gui.Refresh_Players(self.money, self.cards, False)
+            choice = gui.Choose_cards()
+            card.append(self.cards[choice])
+            self.cards.remove(card[1])
+            return card
 
-    def chooseAction(self, known_cards, enemy_hp):
-        if self.money>=10:
+    def chooseAction(self, known_cards, enemy_hp, gui):
+        if self.money >= 10:
             return 2
         if self.is_bot:
             return ai.ai_action(known_cards, self.cards,self.money, enemy_hp)
+        return gui.Choose_action(self.money)
 
-        accepted = 0
-        while accepted != 1:
-            print("Choose your action")
-            action = int(input())
-            if action == 2 and self.money < 7:
-                print("Not enough money")
-                accepted = 0
-            elif action == 4 and self.money < 3:
-                print("Not enough money")
-                accepted = 0
-            else:
-                accepted = 1
-
-        return action
-
-    def challanging(self, known_cards, action_type, block, enemy_hp):
+    def challanging(self, known_cards, action_type, block, enemy_hp, gui):
         if self.is_bot:
             choice = ai.ai_challange(known_cards, self.cards, block, action_type, enemy_hp)
             if choice == 1:
-                print("Player: ", self.name, " challenges")
+                gui.Show_text(4, name=self.name, choice=True)
                 return choice
             else:
-                print("Player: ", self.name, " doesn't challenge")
+                gui.Show_text(4, name=self.name, choice=False)
                 return choice
-        print("Player ", self.name, " do you challange? 0 - no 1 - yes")
-        return int(input())
+        gui.Show_text(3, name=self.name)
+        return gui.Block_Chall()
 
-    def blocking(self, known_cards, action_type):
+    def blocking(self, known_cards, action_type, gui):
         if self.is_bot:
             choice = ai.ai_block(self.cards, action_type)
             if choice == 1:
-                print("Player: ", self.name, " blocks")
+                gui.Show_text(6, name=self.name, choice=True)
                 return choice
             else:
-                print("Player: ", self.name, " doesn't blocks")
+                gui.Show_text(6, name=self.name, choice=False)
                 return choice
-        print("Player ", self.name, " do you block? 0 - no 1 - yes")
-        return int(input())
+        gui.Show_text(5, name=self.name)
+        return gui.Block_Chall()
