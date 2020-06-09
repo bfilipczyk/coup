@@ -1,21 +1,23 @@
-from player import Player
+"""This module defines logic behind game."""
 import random
-import player
-from gui import Game_gui
+from player import Player
+from gui import GameGui
 
 
 class Game:
-
-    def __init__(self):
+    """Game class"""
+    def __init__(self, player, bot):
+        """Inits game object."""
         self.deck = []
-        self.knownCards = []
+        self.known_cards = []
         self.players = []
-        self.roundCount = 0
+        self.round_count = 0
         self.active_player = None
         self.target_player = None
-        self.aliveCount = 2
-        self.interface = Game_gui()
-
+        self.alive_count = 2
+        self.interface = GameGui()
+        self.players.append(player)
+        self.players.append(bot)
         for i in range(0, 2):
             # creating player
             cards = []
@@ -24,6 +26,7 @@ class Game:
         self.players[1].is_bot = True
 
     def pull_card(self, amount):
+        """Returns cards from list of unused cards."""
         cards = random.sample(self.deck, amount)
         for i in cards:
             self.deck.remove(i)
@@ -32,62 +35,61 @@ class Game:
         return cards
 
     def reset(self):
+        """Resets state of game"""
         self.deck = ['russia', 'russia', 'russia', 'protest', 'protest', 'protest', 'media', 'media', 'media', 'police',
-                     'police', 'police', 'ue', 'ue', 'ue']  # 0/Russia 1/protest 2/media 3/police 4/UE
-        self.knownCards = []
-        self.roundCount = 0
+                     'police', 'police', 'ue', 'ue', 'ue']
+        self.known_cards = []
+        self.round_count = 0
         self.active_player = None
         self.target_player = None
-        self.aliveCount = 2
+        self.alive_count = 2
 
         # pulling cards
         cards = self.pull_card(4)
-        for i in range(0, 2):
-            hand = [cards[i], cards[i+2]]
+        for i in range(2):
+            hand = [cards[i], cards[i + 2]]
             # creating player
             self.players[i].cards = hand
             self.players[i].money = 2
             self.players[i].health = 2
 
-        self.players[0].name = 'Player'
-        self.players[1].name = 'Bottimus'
-
-    def Gui_refresh(self):
-        self.interface.Clear_Middle()
-        self.interface.Refresh_Players(self.players[0].money, self.players[0].cards, self.players[0].is_bot)
-        self.interface.Refresh_Players(self.players[1].money, self.players[1].cards, self.players[1].is_bot)
-        self.interface.Refresh_known_cards(self.knownCards)
+    def gui_refresh(self):
+        """Refreshes game screen."""
+        self.interface.clear_middle()
+        self.interface.refresh_players(self.players[0].money, self.players[0].cards, self.players[0].is_bot)
+        self.interface.refresh_players(self.players[1].money, self.players[1].cards, self.players[1].is_bot)
+        self.interface.refresh_known_cards(self.known_cards)
 
     def do_action(self, action_type):
+        """Make actions effects take place."""
         # USA
-        if action_type == 0:
+        if action_type == 'usa':
             self.active_player.money += 1
 
         # local businessmen
-        elif action_type == 1:
+        elif action_type == 'local businessmen':
             self.active_player.money += 2
-
         # affair
-        elif action_type == 2:
-            self.active_player.money -=7
+        elif action_type == "affair":
+            self.active_player.money -= 7
             # utrata karty
-            self.knownCards.append(self.target_player.losingCard(self.interface))
+            self.known_cards.append(self.target_player.losing_card(self.interface))
         # media
-        elif action_type == 3:
+        elif action_type == "media":
             self.active_player.cards.extend(self.pull_card(2))
             # wybieranie kart
-            cards = self.active_player.choosingCards(self.interface)
+            cards = self.active_player.choosing_cards(self.interface)
             self.deck.extend(cards)
         # protest
-        elif action_type == 4:
+        elif action_type == "protest":
             self.active_player.money -= 3
             # utrata karty
-            self.knownCards.append(self.target_player.losingCard(self.interface))
+            self.known_cards.append(self.target_player.losing_card(self.interface))
         # police
-        elif action_type == 5:
+        elif action_type == "police":
             money = 0
-            if self.target_player.money == 1:
-                money = 1
+            if self.target_player.money < 2:
+                money = self.target_player.money
             else:
                 money = 2
 
@@ -98,81 +100,81 @@ class Game:
         else:
             self.active_player.money += 3
 
-    def changingPlayer(self):
+    def changing_player(self):
+        """Changes current player."""
         tmp = self.active_player
         self.active_player = self.target_player
         self.target_player = tmp
 
-    def do_challange(self, active=1, card1=''):
+    def do_challenge(self, active=1, card1=''):
+        """Makes challenge effects take place"""
         if active:  # sprawdza który gracz jest sprawdzany
-            self.knownCards.append(self.target_player.losingCard(self.interface))
+            self.known_cards.append(self.target_player.losing_card(self.interface))
             self.active_player.cards.remove(card1)
             self.deck.append(card1)
             self.active_player.cards.append(self.pull_card(1))
         else:
-            self.knownCards.append(self.active_player.losingCard(self.interface))
+            self.known_cards.append(self.active_player.losing_card(self.interface))
             self.target_player.cards.remove(card1)
             self.deck.append(card1)
             self.target_player.cards.append(self.pull_card(1))
 
-    def challange(self, action_type, block=0):
-        if action_type == 3:  # media
+    def challenge(self, action_type, block=0):
+        """Checks if challenge is successful."""
+        if action_type == "media":  # media
             if 'media' in self.active_player.cards:
-                self.do_challange(1, 'media')
-                return 1
-            else:
-                self.knownCards.append(self.active_player.losingCard(self.interface))
-                return 0
+                self.do_challenge(1, 'media')
+                return True
+            self.known_cards.append(self.active_player.losing_card(self.interface))
+            return False
 
-        elif action_type == 4:  # protest
+        elif action_type == "protest":  # protest
             if block == 1:
                 if 'ue' in self.target_player.cards:
-                    self.do_challange(0, 'ue')
-                    return 0
-                else:
-                    self.knownCards.append(self.target_player.losingCard(self.interface))
-                    return 1
+                    self.do_challenge(0, 'ue')
+                    return False
+                self.known_cards.append(self.target_player.losing_card(self.interface))
+                return True
             else:
                 if 'protest' in self.active_player.cards:
-                    self.do_challange(1,'protest')
-                    return 1
-                else:
-                    self.knownCards.append(self.active_player.losingCard(self.interface))
-                    return 0
-        elif action_type == 5:  # police
+                    self.do_challenge(1, 'protest')
+                    return True
+                self.known_cards.append(self.active_player.losing_card(self.interface))
+                return False
+        elif action_type == "police":  # police
             if block == 1:
                 if 'media' in self.target_player.cards:
-                    self.do_challange(0, 'media')
-                    return 0
+                    self.do_challenge(0, 'media')
+                    return False
                 elif 'police' in self.target_player.cards:
-                    self.do_challange(0, 'police')
-                    return 0
+                    self.do_challenge(0, 'police')
+                    return False
                 else:
-                    self.knownCards.append(self.target_player.losingCard(self.interface))
-                    return 1
+                    self.known_cards.append(self.target_player.losing_card(self.interface))
+                    return True
             else:
                 if 'police' in self.active_player.cards:
-                    self.do_challange(1, 'police')
-                    return 1
+                    self.do_challenge(1, 'police')
+                    return True
                 else:
-                    self.knownCards.append(self.active_player.losingCard(self.interface))
-                    return 0
-        elif action_type == 6:  # Russia
+                    self.known_cards.append(self.active_player.losing_card(self.interface))
+                    return False
+        elif action_type == "russia":  # Russia
             if 'russia' in self.active_player.cards:
-                self.do_challange(1, 'russia')
-                return 1
+                self.do_challenge(1, 'russia')
+                return True
             else:
-                self.knownCards.append(self.active_player.losingCard(self.interface))
-                return 0
+                self.known_cards.append(self.active_player.losing_card(self.interface))
+                return False
         else:
             if 'russia' in self.target_player.cards:
-                self.do_challange(0, 'russia')
-                return 0
-            else:
-                self.knownCards.append(self.target_player.losingCard(self.interface))
-                return 1
+                self.do_challenge(0, 'russia')
+                return False
+            self.known_cards.append(self.target_player.losing_card(self.interface))
+            return True
 
-    def checkHealth(self):
+    def check_health(self):
+        """Returns player's name if it drops to 0."""
         if self.active_player.health == 0:
             return self.target_player.name
         if self.target_player.health == 0:
@@ -180,58 +182,67 @@ class Game:
         return -1
 
     def play(self):
-        blockAction = [1, 4, 5]
-        challangeAction = [3, 4, 5, 6]
-        sPlayerIndex = random.randint(0, 1)
-        actionTypes = ['usa', 'local_businessmen', 'affair', 'media', 'protest', 'police', 'russia']
-        if sPlayerIndex == 1:
+        """Main function responsible for playing game.
+
+        If one of the players' hp drops to 0 game end and waits for restart.
+        """
+        block_action = ['local businessmen', 'protest', 'police']
+        challenge_action = ['media', 'protest', 'police', 'russia']
+        s_player_index = random.randint(0, 1)
+        if s_player_index == 1:
             self.active_player = self.players[1]
             self.target_player = self.players[0]
         else:
             self.active_player = self.players[0]
             self.target_player = self.players[1]
-        while self.aliveCount > 1:
-            self.Gui_refresh()
-            self.interface.Refresh()
-            self.interface.Show_text(1, name=self.active_player.name)
-            action_type = self.active_player.chooseAction(self.knownCards, self.target_player.health, self.interface)
-            self.interface.Show_text(2, action=actionTypes[action_type])
+        while self.alive_count > 1:
+            self.gui_refresh()
+            self.interface.refresh()
+            self.interface.show_text(1, name=self.active_player.name)
+            action_type = self.active_player.choose_action(self.known_cards, self.target_player.health, self.interface)
+            self.interface.show_text(2, action=action_type)
             do = 1  # czy akcja sie wykona
             corb = 0  # sprawdza czy przed blokowanie karta nie została sprawdzona
-            if action_type in challangeAction:
-                if self.target_player.challanging(self.knownCards, action_type, False, self.active_player.health, self.interface):
+            if action_type in challenge_action:
+                if self.target_player.challenging(self.known_cards, action_type, False, self.active_player.health,
+                                                  self.interface):
                     corb = 1
-                    do = self.challange(action_type)
-                    end = self.checkHealth()
+                    do = self.challenge(action_type)
+                    end = self.check_health()
                     if end != -1:
                         break
-            if action_type in blockAction and corb == 0:
-                if self.target_player.blocking(self.knownCards, action_type, self.interface):
-                    if self.active_player.challanging(self.knownCards, action_type, True, self.target_player.health, self.interface):
-                        do = self.challange(action_type, 1)
-                        end = self.checkHealth()
+            if action_type in block_action and corb == 0:
+                if self.target_player.blocking(action_type, self.interface):
+                    if self.active_player.challenging(self.known_cards, action_type, True, self.target_player.health,
+                                                      self.interface):
+                        do = self.challenge(action_type, 1)
+                        end = self.check_health()
                         if end != -1:
                             break
                     else:
                         do = 0
             if do:
                 self.do_action(action_type)
-                end = self.checkHealth()
+                end = self.check_health()
                 if end != -1:
                     break
-            self.changingPlayer()
-            self.roundCount += 1
+            self.changing_player()
+            self.round_count += 1
         if self.active_player.health > 0:
-            return self.interface.Win_message(self.active_player.name)
-        else:
-            return self.interface.Win_message(self.target_player.name)
+            return self.interface.win_message(self.active_player.name)
+        return self.interface.win_message(self.target_player.name)
+
 
 def main():
-    game = Game()
+
+    player = Player([], 2, "Player", False)
+    bot = Player([], 2, "Bottimus", True)
+    game = Game(player, bot)
     game.reset()
     while True:
         if game.play():
             game.reset()
+
 
 if __name__ == '__main__':
     main()
