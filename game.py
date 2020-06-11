@@ -175,9 +175,9 @@ class Game:
 
     def check_health(self):
         """Returns player's name if it drops to 0."""
-        if self.active_player.health == 0:
+        if self.active_player.health <= 0:
             return self.target_player.name
-        if self.target_player.health == 0:
+        if self.target_player.health <= 0:
             return self.active_player.name
         return -1
 
