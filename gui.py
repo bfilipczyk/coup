@@ -6,7 +6,7 @@ button_color = (106, 82, 80)
 box_color = (74, 82, 80)
 
 
-class Button():
+class Button:
     """Button class."""
     def __init__(self, color, x, y, width, height, text=''):
         """Inits object."""
