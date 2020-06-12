@@ -128,50 +128,44 @@ class Game:
             self.known_cards.append(self.active_player.losing_card(self.interface))
             return False
 
-        elif action_type == "protest":  # protest
+        if action_type == "protest":  # protest
             if block == 1:
                 if 'ue' in self.target_player.cards:
                     self.do_challenge(0, 'ue')
                     return False
                 self.known_cards.append(self.target_player.losing_card(self.interface))
                 return True
-            else:
-                if 'protest' in self.active_player.cards:
-                    self.do_challenge(1, 'protest')
-                    return True
-                self.known_cards.append(self.active_player.losing_card(self.interface))
-                return False
-        elif action_type == "police":  # police
+            if 'protest' in self.active_player.cards:
+                self.do_challenge(1, 'protest')
+                return True
+            self.known_cards.append(self.active_player.losing_card(self.interface))
+            return False
+        if action_type == "police":  # police
             if block == 1:
                 if 'media' in self.target_player.cards:
                     self.do_challenge(0, 'media')
                     return False
-                elif 'police' in self.target_player.cards:
+                if 'police' in self.target_player.cards:
                     self.do_challenge(0, 'police')
                     return False
-                else:
-                    self.known_cards.append(self.target_player.losing_card(self.interface))
-                    return True
-            else:
-                if 'police' in self.active_player.cards:
-                    self.do_challenge(1, 'police')
-                    return True
-                else:
-                    self.known_cards.append(self.active_player.losing_card(self.interface))
-                    return False
-        elif action_type == "russia":  # Russia
+                self.known_cards.append(self.target_player.losing_card(self.interface))
+                return True
+            if 'police' in self.active_player.cards:
+                self.do_challenge(1, 'police')
+                return True
+            self.known_cards.append(self.active_player.losing_card(self.interface))
+            return False
+        if action_type == "russia":  # Russia
             if 'russia' in self.active_player.cards:
                 self.do_challenge(1, 'russia')
                 return True
-            else:
-                self.known_cards.append(self.active_player.losing_card(self.interface))
-                return False
-        else:
-            if 'russia' in self.target_player.cards:
-                self.do_challenge(0, 'russia')
-                return False
-            self.known_cards.append(self.target_player.losing_card(self.interface))
-            return True
+            self.known_cards.append(self.active_player.losing_card(self.interface))
+            return False
+        if 'russia' in self.target_player.cards:
+            self.do_challenge(0, 'russia')
+            return False
+        self.known_cards.append(self.target_player.losing_card(self.interface))
+        return True
 
     def check_health(self):
         """Returns player's name if it drops to 0."""

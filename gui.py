@@ -192,15 +192,13 @@ class GameGui:
                     if self.b_affair.is_over(pos):
                         if money >= 7:
                             return "affair"
-                        else:
-                            self.show_text(0)
+                        self.show_text(0)
                     if self.b_media.is_over(pos):
                         return "media"
                     if self.b_protest.is_over(pos):
                         if money >= 3:
                             return "protest"
-                        else:
-                            self.show_text(0)
+                        self.show_text(0)
                     if self.b_police.is_over(pos):
                         return "police"
                     if self.b_russia.is_over(pos):
@@ -220,10 +218,12 @@ class GameGui:
                         return 0
                     if self.card2.is_over(pos):
                         return 1
-                    if self.card3.is_over(pos):
-                        return 2
-                    if self.card4.is_over(pos):
-                        return 3
+                    if self.card3 is not None:
+                        if self.card3.is_over(pos):
+                            return 2
+                        if self.card3 is not None:
+                            if self.card4.is_over(pos):
+                                return 3
 
     def block_chall(self):
         """Checks if player blocks/challenges."""
@@ -257,6 +257,3 @@ class GameGui:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if reset.is_over(pos):
                         return True
-
-
-
