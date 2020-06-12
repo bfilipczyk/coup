@@ -64,9 +64,9 @@ def ai_action(known_cards, player_cards, player_money, enemy_hp):
     """Calculates action for AI."""
     deck = add_to_deck(known_cards, player_cards)
     enemy_deck = itertools.combinations(deck, enemy_hp)
-    actions = ['usa', 'local bisnessmen', 'affair', 'media', 'protest', 'police', 'russia']
+    actions = ['usa', 'local businessmen', 'affair', 'media', 'protest', 'police', 'russia']
     usa = Result()
-    local_bisnessmen = Result()
+    local_businessmen = Result()
     media = Result()
     police = Result()
     russia = Result()
@@ -84,22 +84,22 @@ def ai_action(known_cards, player_cards, player_money, enemy_hp):
             if choice == 'usa':
                 usa.value += 1
                 usa.times += 1
-            elif choice == 'local bisnessmen':
+            elif choice == 'local businessmen':
                 block = random.choice([0, 1])  # 1-przeciwnik blokuje 0-przeciwnik nie blokuje
                 if block == 0:
-                    local_bisnessmen.value += 2
-                    local_bisnessmen.times += 1
+                    local_businessmen.value += 2
+                    local_businessmen.times += 1
                 else:
                     checkp = random.choice([0, 1])  # 1-ai sprawdza gracza
                     if checkp == 0:
-                        local_bisnessmen.times += 1
+                        local_businessmen.times += 1
                     else:
                         if 'russia' in hand:
-                            local_bisnessmen.value += -10
-                            local_bisnessmen.times += 1
+                            local_businessmen.value += -10
+                            local_businessmen.times += 1
                         else:
-                            local_bisnessmen.value += 12
-                            local_bisnessmen.times += 1
+                            local_businessmen.value += 12
+                            local_businessmen.times += 1
             elif choice == 'affair':
                 affair.value += 10
                 affair.times += 1
@@ -180,20 +180,18 @@ def ai_action(known_cards, player_cards, player_money, enemy_hp):
                         russia.value += -10
                         russia.times += 1
     best_action = 0
-    results = [usa, local_bisnessmen, affair, media, protest, police, russia]
+    results = [usa, local_businessmen, affair, media, protest, police, russia]
     for i in range(len(results)):
         if results[best_action].weight() < results[i].weight():
             best_action = i
-    tmp = ['usa', 'local bisnessmen', 'affair', 'media', 'protest', 'police', 'russia']
+    tmp = ['usa', 'local businessmen', 'affair', 'media', 'protest', 'police', 'russia']
     return tmp[best_action]
 
 
 def ai_block(player_cards, action_type):
     """Calculates if AI should block action."""
-    block_value = 0
-    block_times = 0
-    noblock_value = 0
-    noblock_times = 0
+    block = Result()
+    noblock = Result()
     for _ in range(0, 1000):
         if action_type == "local businessmen":  # 1 - local businessmen,
             block = random.choice([True, False])  # true-ai blokuje false-ai nie blokuje
@@ -201,56 +199,53 @@ def ai_block(player_cards, action_type):
                 check = random.choice([True, False])
                 if check:
                     if 'russia' in player_cards:
-                        block_value += 12
-                        block_times += 1
+                        block.value += 12
+                        block.times += 1
                     else:
-                        block_value -= 10
-                        block_times += 1
+                        block.value -= 10
+                        block.times += 1
                 else:
-                    block_value += 2
-                    block_times += 1
+                    block.value += 2
+                    block.times += 1
             else:
-                noblock_value += -2
-                noblock_times += 1
+                noblock.value += -2
+                noblock.times += 1
         elif action_type == "protest":  # 4 - protest
             block = random.choice([True, False])
             if block:
                 check = random.choice([True, False])
                 if check:
                     if 'ue' in player_cards:
-                        block_value += 10
-                        block_times += 1
+                        block.value += 10
+                        block.times += 1
                     else:
-                        block_value += -20
-                        block_times += 1
+                        block.value += -20
+                        block.times += 1
                 else:
-                    block_value += 0
-                    block_times += 1
+                    block.value += 0
+                    block.times += 1
             else:
-                noblock_value += -10
-                noblock_times += 1
+                noblock.value += -10
+                noblock.times += 1
         else:  # 5 - police
             block = random.choice([True, False])
             if block:
                 check = random.choice([True, False])
                 if check:
                     if 'police' or 'media' in player_cards:
-                        block_value += 10
-                        block_times += 1
+                        block.value += 10
+                        block.times += 1
                     else:
-                        block_value += -10
-                        block_times += 1
+                        block.value += -10
+                        block.times += 1
                 else:
-                    block_value += 3
-                    block_times += 1
+                    block.value += 3
+                    block.times += 1
             else:
-                noblock_value += -3
-                noblock_times += 1
+                noblock.value += -3
+                noblock.times += 1
 
-    b_weight = block_value/block_times
-    nb_weight = noblock_value/noblock_times
-
-    if b_weight > nb_weight:
+    if block.weight() > noblock.weight():
         return True
     return False
 
@@ -261,10 +256,8 @@ def ai_challenge(known_cards, player_cards, block, action_type, enemy_hp):
     deck = add_to_deck(known_cards, player_cards)
     enemy_deck = itertools.combinations(deck, enemy_hp)
 
-    check_value = 0
-    check_times = 0
-    nocheck_value = 0
-    nocheck_times = 0
+    check = Result()
+    nocheck = Result()
 
     for hand in enemy_deck:
         for _ in range(0, 1000):
@@ -272,92 +265,89 @@ def ai_challenge(known_cards, player_cards, block, action_type, enemy_hp):
                 checkp = random.choice([True, False])
                 if checkp:
                     if 'media' in hand:
-                        check_value += -12
-                        check_times += 1
+                        check.value += -12
+                        check.times += 1
                     else:
-                        check_value += 12
-                        check_times += 1
+                        check.value += 12
+                        check.times += 1
                 else:
-                    nocheck_value += -2
-                    nocheck_times += 1
+                    nocheck.value += -2
+                    nocheck.times += 1
             elif action_type == "protest":  # protest
                 if block:
                     checkp = random.choice([True, False])
                     if checkp:
                         if 'ue' in hand:
-                            check_value += -10
-                            check_times += 1
+                            check.value += -10
+                            check.times += 1
                         else:
-                            check_value += 20
-                            check_times += 1
+                            check.value += 20
+                            check.times += 1
                     else:
-                        nocheck_value += 0
-                        nocheck_times += 1
+                        nocheck.value += 0
+                        nocheck.times += 1
                 else:
                     checkp = random.choice([True, False])
                     if checkp:
                         if 'protest' in hand:
-                            check_value += -20
-                            check_times += 1
+                            check.value += -20
+                            check.times += 1
                         else:
-                            check_value += 13
-                            check_times += 1
+                            check.value += 13
+                            check.times += 1
                     else:
-                        nocheck_value += -10
-                        nocheck_times += 1
+                        nocheck.value += -10
+                        nocheck.times += 1
             elif action_type == "police":  # police
                 if block:
                     checkp = random.choice([True, False])
                     if checkp:
                         if 'media' or 'police' in hand:
-                            check_value += -10
-                            check_times += 1
+                            check.value += -10
+                            check.times += 1
                         else:
-                            check_value += 13
-                            check_times += 1
+                            check.value += 13
+                            check.times += 1
                     else:
-                        nocheck_value += 0
-                        nocheck_times += 1
+                        nocheck.value += 0
+                        nocheck.times += 1
                 else:
                     checkp = random.choice([True, False])
                     if checkp:
                         if 'police' in hand:
-                            check_value += -13
-                            check_times += 1
+                            check.value += -13
+                            check.times += 1
                         else:
-                            check_value += 10
-                            check_times += 1
+                            check.value += 10
+                            check.times += 1
                     else:
-                        nocheck_value += -3
-                        nocheck_times += 1
+                        nocheck.value += -3
+                        nocheck.times += 1
             elif action_type == "Russia":  # Russia
                 checkp = random.choice([True, False])
                 if checkp:
                     if 'russia' in hand:
-                        check_value += -13
-                        check_times += 1
+                        check.value += -13
+                        check.times += 1
                     else:
-                        check_value += 10
-                        check_times += 1
+                        check.value += 10
+                        check.times += 1
                 else:
-                    nocheck_value += -3
-                    nocheck_times += 1
+                    nocheck.value += -3
+                    nocheck.times += 1
             else:
                 checkp = random.choice([True, False])
                 if checkp:
                     if 'russia' in enemy_deck:
-                        check_value += -10
-                        check_times += 1
+                        check.value += -10
+                        check.times += 1
                     else:
-                        check_value += 13
-                        check_times += 1
+                        check.value += 13
+                        check.times += 1
                 else:
-                    nocheck_value += 0
-                    nocheck_times += 1
+                    nocheck.value += 0
+                    nocheck.times += 1
 
-    c_weight = check_value / check_times
-    nc_weight = nocheck_value / nocheck_times
-
-    if c_weight > nc_weight:
+    if check.weight() > nocheck.weight():
         return True
     return False
