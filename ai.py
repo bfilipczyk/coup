@@ -194,8 +194,8 @@ def ai_block(player_cards, action_type):
     noblock = Result()
     for _ in range(0, 1000):
         if action_type == "local businessmen":  # 1 - local businessmen,
-            block = random.choice([True, False])  # true-ai blokuje false-ai nie blokuje
-            if block:
+            blocka = random.choice([True, False])  # true-ai blokuje false-ai nie blokuje
+            if blocka:
                 check = random.choice([True, False])
                 if check:
                     if 'russia' in player_cards:
@@ -211,8 +211,8 @@ def ai_block(player_cards, action_type):
                 noblock.value += -2
                 noblock.times += 1
         elif action_type == "protest":  # 4 - protest
-            block = random.choice([True, False])
-            if block:
+            blocka = random.choice([True, False])
+            if blocka:
                 check = random.choice([True, False])
                 if check:
                     if 'ue' in player_cards:
@@ -228,8 +228,8 @@ def ai_block(player_cards, action_type):
                 noblock.value += -10
                 noblock.times += 1
         else:  # 5 - police
-            block = random.choice([True, False])
-            if block:
+            blocka = random.choice([True, False])
+            if blocka:
                 check = random.choice([True, False])
                 if check:
                     if 'police' or 'media' in player_cards:

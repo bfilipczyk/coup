@@ -18,12 +18,6 @@ class Game:
         self.interface = GameGui()
         self.players.append(player)
         self.players.append(bot)
-        for i in range(0, 2):
-            # creating player
-            cards = []
-            player = Player(cards, 2, i, False)
-            self.players.append(player)
-        self.players[1].is_bot = True
 
     def pull_card(self, amount):
         """Returns cards from list of unused cards."""
