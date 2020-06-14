@@ -2,8 +2,8 @@
 import sys
 import pygame
 
-button_color = (106, 82, 80)
-box_color = (74, 82, 80)
+BUTTON_COLOR = (106, 82, 80)
+BOX_COLOR = (74, 82, 80)
 
 
 class Button:
@@ -45,23 +45,23 @@ class GameGui:
         pygame.display.set_caption("coup")
 
         #drawing actions box
-        pygame.draw.rect(self.screen, box_color, (0, 0, 230, 800))
+        pygame.draw.rect(self.screen, BOX_COLOR, (0, 0, 230, 800))
         label = self.font.render("Actions:", 0, (0, 0, 0))
         self.screen.blit(label, (80, 30))
         #making button for each action
-        self.b_usa = Button(button_color, 50, 60, 130, 30, 'USA')
+        self.b_usa = Button(BUTTON_COLOR, 50, 60, 130, 30, 'USA')
         self.b_usa.draw(self.screen)
-        self.b_local_businessmen = Button(button_color, 50, 130, 130, 30, 'Local Businessmen')
+        self.b_local_businessmen = Button(BUTTON_COLOR, 50, 130, 130, 30, 'Local Businessmen')
         self.b_local_businessmen.draw(self.screen)
-        self.b_affair = Button(button_color, 50, 200, 130, 30, 'Affair')
+        self.b_affair = Button(BUTTON_COLOR, 50, 200, 130, 30, 'Affair')
         self.b_affair.draw(self.screen)
-        self.b_media = Button(button_color, 50, 270, 130, 30, 'Media')
+        self.b_media = Button(BUTTON_COLOR, 50, 270, 130, 30, 'Media')
         self.b_media.draw(self.screen)
-        self.b_protest = Button(button_color, 50, 340, 130, 30, 'Protest')
+        self.b_protest = Button(BUTTON_COLOR, 50, 340, 130, 30, 'Protest')
         self.b_protest.draw(self.screen)
-        self.b_police = Button(button_color, 50, 410, 130, 30, 'Police')
+        self.b_police = Button(BUTTON_COLOR, 50, 410, 130, 30, 'Police')
         self.b_police.draw(self.screen)
-        self.b_russia = Button(button_color, 50, 480, 130, 30, 'Russia')
+        self.b_russia = Button(BUTTON_COLOR, 50, 480, 130, 30, 'Russia')
         self.b_russia.draw(self.screen)
         self.card1 = None
         self.card2 = None
@@ -69,26 +69,26 @@ class GameGui:
         self.card4 = None
 
         #making challenge/block box
-        pygame.draw.rect(self.screen, box_color, (570, 310, 230, 290))
+        pygame.draw.rect(self.screen, BOX_COLOR, (570, 310, 230, 290))
         label = self.font.render("Challenge / Block:", 0, (0, 0, 0))
         self.screen.blit(label, (630, 340))
         #buttons
-        self.b_yes = Button(button_color, 620, 400, 130, 30, 'Yes')
+        self.b_yes = Button(BUTTON_COLOR, 620, 400, 130, 30, 'Yes')
         self.b_yes.draw(self.screen)
-        self.b_no = Button(button_color, 620, 505, 130, 30, 'No')
+        self.b_no = Button(BUTTON_COLOR, 620, 505, 130, 30, 'No')
         self.b_no.draw(self.screen)
 
     def clear_middle(self, whole=True):
         """Clears messages in middle rectangle."""
         if whole:
-            pygame.draw.rect(self.screen, box_color, (250, 180, 300, 220))
+            pygame.draw.rect(self.screen, BOX_COLOR, (250, 180, 300, 220))
         else:
-            pygame.draw.rect(self.screen, box_color, (335, 365, 145, 25))
+            pygame.draw.rect(self.screen, BOX_COLOR, (335, 365, 145, 25))
 
     def refresh_players(self, money, cards, is_bot):
         """Refreshes informations about players."""
         if is_bot:
-            pygame.draw.rect(self.screen, box_color, (250, 0, 300, 150))
+            pygame.draw.rect(self.screen, BOX_COLOR, (250, 0, 300, 150))
             name_label = self.font.render("Bottimus", 0, (0, 0, 0))
             self.screen.blit(name_label, (370, 40))
             money_label = self.font.render('Money: ' + str(money), 0, (0, 0, 0))
@@ -96,7 +96,7 @@ class GameGui:
             cards_label = self.font.render('Cards: ' + str(len(cards)), 0, (0, 0, 0))
             self.screen.blit(cards_label, (430, 80))
         else:
-            pygame.draw.rect(self.screen, box_color, (250, 420, 300, 180))
+            pygame.draw.rect(self.screen, BOX_COLOR, (250, 420, 300, 180))
             name_label = self.font.render("Player", 0, (0, 0, 0))
             self.screen.blit(name_label, (380, 430))
             money_label = self.font.render('Money: ' + str(money), 0, (0, 0, 0))
@@ -104,16 +104,16 @@ class GameGui:
             cards_label = self.font.render('Cards: ', 0, (0, 0, 0))
             self.screen.blit(cards_label, (380, 480))
             amount = len(cards)
-            self.card1 = Button(button_color, 260, 505, 130, 30, cards[0])
+            self.card1 = Button(BUTTON_COLOR, 260, 505, 130, 30, cards[0])
             self.card1.draw(self.screen)
             if amount >= 2:
-                self.card2 = Button(button_color, 410, 505, 130, 30, cards[1])
+                self.card2 = Button(BUTTON_COLOR, 410, 505, 130, 30, cards[1])
                 self.card2.draw(self.screen)
                 if amount >= 3:
-                    self.card3 = Button(button_color, 260, 550, 130, 30, cards[2])
+                    self.card3 = Button(BUTTON_COLOR, 260, 550, 130, 30, cards[2])
                     self.card3.draw(self.screen)
                     if amount == 4:
-                        self.card4 = Button(button_color, 410, 550, 130, 30, cards[3])
+                        self.card4 = Button(BUTTON_COLOR, 410, 550, 130, 30, cards[3])
                         self.card4.draw(self.screen)
                     else:
                         self.card4 = None
@@ -127,7 +127,7 @@ class GameGui:
 
     def refresh_known_cards(self, cards):
         """Refreshes list of known cards."""
-        pygame.draw.rect(self.screen, box_color, (570, 0, 230, 290))
+        pygame.draw.rect(self.screen, BOX_COLOR, (570, 0, 230, 290))
         name_label = self.font.render("Known cards:", 0, (0, 0, 0))
         self.screen.blit(name_label, (630, 30))
         h_tmp = 80
@@ -246,7 +246,7 @@ class GameGui:
     def win_message(self, name):
         """Show win screen."""
         self.show_text(8, name)
-        reset = Button(button_color, 335, 285, 130, 30, 'Restart')
+        reset = Button(BUTTON_COLOR, 335, 285, 130, 30, 'Restart')
         reset.draw(self.screen)
         while True:
             pygame.display.update()

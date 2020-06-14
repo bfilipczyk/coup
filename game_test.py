@@ -83,3 +83,5 @@ class GameTest(unittest.TestCase):
         self.assertEqual(self.game.active_player.money, 4)
 
 
+if __name__ == '__main__':
+    unittest.main()
